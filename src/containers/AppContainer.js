@@ -6,7 +6,10 @@ import dotty from 'dotty'
 const mapStateToProps = (state) => {
   return {
   	playerId: dotty.get(state, 'game.player.id'),
-  	status: dotty.get(state, 'game.group.status')
+  	gameStatus: dotty.get(state, 'game.group.status'),
+    player: dotty.get(state, 'game.player'),
+    error: state.error,
+    errorMessage: state.errorMessage
   };
 };
 

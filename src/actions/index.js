@@ -1,5 +1,13 @@
+import dotty from 'dotty'
 import fetch from 'isomorphic-fetch'
 import AppConstants from '../AppConstants'
+
+export const receiveError = (message) => {
+  return {
+    type: 'ERROR',
+    message: message
+  };
+}
 
 export const createGroupSuccess = (groupJson) => {
   return {
@@ -10,17 +18,10 @@ export const createGroupSuccess = (groupJson) => {
 
 export const createGroup = (groupSize) => {
   return function (dispatch) {
-    return fetch(`${AppConstants.server}/api/group`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        size: groupSize
-      })
+    return buildRequest('POST', '/group', {
+      size: groupSize
     })
-    .then(response => response.json())
-    .then(json => dispatch(createGroupSuccess(json)));
+    .then(response => handleResponse(response, dispatch, createGroupSuccess));
   }
 };
 
@@ -33,29 +34,22 @@ export const joinGroupSuccess = (groupJson) => {
 
 export const joinGroup = (groupId) => {
   return function (dispatch) {
-    return fetch(`${AppConstants.server}/api/group/${groupId}/join`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => response.json())
-    .then(json => dispatch(joinGroupSuccess(json)));
+    return buildRequest('POST', `/group/${groupId}/join`, {})
+    .then(response => handleResponse(response, dispatch, joinGroupSuccess));
   }
 };
 
-export const receiveCharacterList = (characters) => {
+export const receiveCharacterList = (json) => {
   return {
     type: 'RECEIVE_CHARACTER_LIST',
-    characters: characters
+    characters: json.characters
   };
 }
 
 export const getCharacterList = () => {
   return function(dispatch) {
     return fetch(`${AppConstants.server}/api/characters`)
-      .then(response => response.json())
-      .then(json => dispatch(receiveCharacterList(json.characters)));
+      .then(response => handleResponse(response, dispatch, receiveCharacterList));
   }
 }
 
@@ -64,18 +58,24 @@ export const submitCharacterList = (characters) => {
     const state = getState();
     const groupId = state.game.group.id;
     const playerId = state.game.player.id;
-    return fetch(`${AppConstants.server}/api/group/${groupId}/characters`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        player_id: playerId,
-        characters: characters
-      })
+    return buildRequest('POST', `/group/${groupId}/characters`, {
+      player_id: playerId,
+      characters: characters
     })
-    .then(response => response.json())
+    .then(response => handleResponse(response, dispatch, null));
   }
+}
+
+export const ready = (name, photo) => {
+  return function (dispatch, getState) {
+    const playerId = getState().game.player.id;
+    return buildRequest('POST', '/ready', {
+      player_id: playerId,
+      name: name,
+      photo: photo
+    })
+    .then(response => handleResponse(response, dispatch, null));
+  };
 }
 
 export const receivePlayerView = (gameView) => {
@@ -88,7 +88,49 @@ export const receivePlayerView = (gameView) => {
 export const getPlayerView = () => {
   return function(dispatch, getState) {
     return fetch(`${AppConstants.server}/api/player_view?player_id=${getState().game.player.id}`)
-      .then(response => response.json())
-      .then(json => dispatch(receivePlayerView(json)));
+      .then(response => handleResponse(response, dispatch, receivePlayerView));
   }
+}
+
+export const cleanup = () => {
+  return {
+    type: 'CLEAN_UP'
+  };
+}
+
+export const unsubscribe = () => {
+  return function(dispatch, getState) {
+    const playerId = dotty.get(getState(), 'game.player.id');
+    if (playerId) {
+      return fetch(`${AppConstants.server}/api/unsubscribe/${playerId}`)
+        .then(json => dispatch(cleanup()));
+    }
+  }
+}
+
+// set action to null to ignore response but only handle errors.
+function handleResponse(response, dispatch, action) {
+  if (response.ok) {
+    response.json().then(json => {
+      if (json.success) {
+        if (action) {
+          dispatch(action(json));
+        }
+      } else {
+        dispatch(receiveError(json.message));
+      }
+    });
+  } else {
+    response.text().then(text => dispatch(receiveError(text)));
+  }
+}
+
+function buildRequest(method, endpoint, body) {
+  return fetch(`${AppConstants.server}/api${endpoint}`, {
+    method: method,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
 }
