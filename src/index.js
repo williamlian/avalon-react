@@ -25,7 +25,7 @@ import { createStore, applyMiddleware } from 'redux'
 import AppReducer from './reducers'
 import AppContainer from './containers/AppContainer';
 import './index.css';
-import { unsubscribe } from './actions'
+import { loadCookie, unsubscribe } from './actions'
 
 const loggerMiddleware = createLogger();
 
@@ -43,6 +43,8 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root')
 );
+
+store.dispatch(loadCookie());
 
 window.onbeforeunload = () => {
 	store.dispatch(unsubscribe());

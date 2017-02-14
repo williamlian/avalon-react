@@ -5,7 +5,8 @@ import {getCharacterList, submitCharacterList} from '../actions'
 
 const mapStateToProps = (state) => {
   return {
-  	characters: dotty.get(state, 'characters')
+  	characters: dotty.get(state, 'characters'),
+    setting: dotty.get(state, 'game.group.setting')
   };
 };
 

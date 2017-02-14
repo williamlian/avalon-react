@@ -23,9 +23,14 @@ class Player extends Component {
         onChange={this.onToggle}/>;
     }
 
+    var vote = '';
+    if (player.voted) {
+      vote = <p>Vote: {player.last_vote ? 'Approved' : 'Rejected'}</p>
+    }
     return (<div style={ {border:'solid 1px black'} }>
       <p>{player.name} - {player.character}</p>
       <p>King: {player.is_king ? '*' : '-'} | Knight: {knightToggle}</p>
+      {vote}
     </div>)
   }
 }

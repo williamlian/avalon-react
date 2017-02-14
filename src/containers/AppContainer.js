@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import App from '../components/App'
-import {getPlayerView} from '../actions'
+import {getPlayerView, abandon, unsubscribe} from '../actions'
 import dotty from 'dotty'
 
 const mapStateToProps = (state) => {
@@ -17,7 +17,13 @@ const mapDispatchToProps = (dispatch) => {
   return {
   	getPlayerViewAction: (playerId) => {
   		dispatch(getPlayerView(playerId));
-  	}
+  	},
+    abandonAction: () => {
+      dispatch(abandon());
+    },
+    unsubscribeAction: () => {
+      dispatch(unsubscribe());
+    }
   };
 };
 

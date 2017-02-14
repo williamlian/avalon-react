@@ -28,7 +28,7 @@ class CharacterList extends Component {
     const characterSelected = [];
     checked.forEach((check, i) => {
       if (check) {
-        characterSelected.push(this.props.characters[i])
+        characterSelected.push(this.props.characters[i].key)
       }
     });
     this.props.submitAction(characterSelected);
@@ -36,11 +36,16 @@ class CharacterList extends Component {
 
   render() {
     const self = this;
-    const characterSwitches = this.props.characters.map(function(c, i) {
+    const setting = this.props.setting;
+    const characterSwitches = this.props.characters.map(function(char, index) {
       return (
-        <li key={i}>
-          <label>{c}
-          <input type="checkbox" value={i} checked={self.state.checked[i] || false} onChange={self.onCharacterChanged}/>
+        <li key={index}>
+          <label>{char.name} ({char.side})
+            <input
+              type="checkbox" 
+              value={index} 
+              checked={self.state.checked[index] || false} 
+              onChange={self.onCharacterChanged}/>
           </label>
         </li>
       );
@@ -48,6 +53,7 @@ class CharacterList extends Component {
 
     return (
       <div>
+        <p>Good: {setting.good} | Evil: {setting.evil}</p>
         <ul>{characterSwitches}</ul>
         <div>
           <input type="button" value="submit" onClick={this.onSubmit}/>

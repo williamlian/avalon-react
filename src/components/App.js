@@ -6,6 +6,7 @@ import CharacterListContainer from '../containers/CharacterListContainer'
 import ReadyContainer from '../containers/ReadyContainer'
 import WaitingContainer from '../containers/WaitingContainer'
 import GameConatainer from '../containers/GameContainer'
+import Toolbar from './widget/Toolbar'
 
 class App extends Component {
 
@@ -15,7 +16,6 @@ class App extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('App Props', nextProps);
     const oldPlayerId = this.props.playerId;
     const newPlayerId = nextProps.playerId;
     
@@ -29,7 +29,11 @@ class App extends Component {
         console.log(`start subsription for player ${newPlayerId}`)
         this.subscription = new window.EventSource(`${AppConstants.server}/api/subscribe/${newPlayerId}`);
         this.subscription.onmessage = (message) => {
-          this.props.getPlayerViewAction();
+          if (message === 'abandon') {
+            this.props.unsubscribeAction();
+          } else {
+            this.props.getPlayerViewAction();
+          }
         };
       }
     }
@@ -50,18 +54,15 @@ class App extends Component {
       } else {
         page = <WaitingContainer/>;
       }
-    } else if (gameStatus === 'started') {
+    } else if (gameStatus === 'started' || gameStatus === 'voting' || gameStatus === 'quest') {
       page = <GameConatainer/>;
-    } else if (gameStatus === 'voting') {
-      page = 'voting' 
-    } else if (gameStatus === 'quest') {
-      page = 'quest'  
     } else {
       page = <EntryContainer/>;
     }
 
     return (
       <div>
+        <Toolbar player={player} abandonAction={this.props.abandonAction}/>
         {page}
       </div>
     );
@@ -71,7 +72,10 @@ class App extends Component {
 App.propTypes = {
   playerId: PropTypes.string,
   gameStatus: PropTypes.string,
-  player: PropTypes.object
+  player: PropTypes.object,
+
+  abandonAction: PropTypes.func,
+  unsubscribeAction: PropTypes.func
 };
 
 export default App;

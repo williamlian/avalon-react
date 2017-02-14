@@ -12,6 +12,7 @@
     "eventsource": "^0.2.1",
     "isomorphic-fetch": "^2.2.1",
     "react": "^15.4.2",
+    "react-cookie": "^1.0.4",
     "react-dom": "^15.4.2",
     "react-redux": "^5.0.2",
     "redux": "^3.6.0",
