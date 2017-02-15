@@ -10,20 +10,45 @@ class PlayerList extends Component {
       selected: {}
     };
 
-    this.onToggleKnight = this.onToggleKnight.bind(this);
+    this.onToggle = this.onToggle.bind(this);
   }
 
-  onToggleKnight(sequence, isKnight) {
-    const selected = this.state.selected;
-    selected[sequence] = isKnight;
-    this.setState(selected);
+  componentWillReceiveProps(nextProps) {
+    // reset selection if vote completes
+    if (nextProps.viewType === 'normal') {
+      this.setState({selected: {}});
+    } else if (nextProps.viewType === 'assassination') {
+      var target = -1;
+      nextProps.players.forEach(player => {
+        if (player.assassination_target) {
+          target = player.player_sequence;
+        }
+      });
+      if (target > 0) {
+        this.setState({
+          selected: {[target]: true}
+        });
+      }
+    }
+  }
 
-    if (this.props.kingView && this.props.nominate) {
+  onToggle(sequence, checked) {
+    var selected = this.state.selected;
+
+    if (this.props.viewType === "king") {
+      selected[sequence] = checked;
+      this.setState({selected: selected});
       const seq = Object.keys(selected).filter(x => selected[x]);
       if (seq.length === 0) {
         seq.push(-1);
       }
       this.props.nominate(seq);
+
+    } else if (this.props.viewType === 'assassination') {
+      selected = {};
+      selected[sequence] = true;
+      this.setState({selected: selected});
+      this.props.nominateAssassination(sequence);
     }
   }
   
@@ -34,9 +59,9 @@ class PlayerList extends Component {
       player => <Player 
         player={player} 
         key={player.player_sequence}
-        kingView={self.props.kingView}
+        viewType={self.props.viewType}
         selected={self.state.selected[player.player_sequence]}
-        onToggleKnight={self.onToggleKnight}
+        toggle={self.onToggle}
       />);
 
     return <div>
@@ -47,10 +72,10 @@ class PlayerList extends Component {
 
 PlayerList.propTypes = {
   players: PropTypes.array.isRequired,
-  isVoting: PropTypes.bool.isRequired,
+  viewType: PropTypes.string.isRequired,
 
-  kingView: PropTypes.bool,
-  nominate: PropTypes.func
+  nominate: PropTypes.func,
+  nominateAssassination: PropTypes.func
 };
 
 export default PlayerList;

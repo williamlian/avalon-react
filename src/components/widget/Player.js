@@ -9,14 +9,23 @@ class Player extends Component {
   }
 
   onToggle(event) {
-    this.props.onToggleKnight(event.target.value, event.target.checked);
+    this.props.toggle(event.target.value, event.target.checked);
   }
   
   render() {
     const player = this.props.player;
     var knightToggle = player.is_knight ? '*' : '-';
-    if (this.props.kingView) {
+    if (this.props.viewType === 'king') {
       knightToggle = <input 
+        type="checkbox"
+        value={this.props.player.player_sequence}
+        checked={this.props.selected}
+        onChange={this.onToggle}/>;
+    }
+
+    var assassinationToggle = player.assassination_target ? '*' : '-';
+    if (this.props.viewType === 'assassination') {
+      assassinationToggle = <input 
         type="checkbox"
         value={this.props.player.player_sequence}
         checked={this.props.selected}
@@ -25,11 +34,15 @@ class Player extends Component {
 
     var vote = '';
     if (player.voted) {
-      vote = <p>Vote: {player.last_vote ? 'Approved' : 'Rejected'}</p>
+      if (player.last_vote === null) {
+        vote = <p>Vote: - </p>
+      } else {
+        vote = <p>Vote: {player.last_vote ? 'Approved' : 'Rejected'}</p>
+      }
     }
     return (<div style={ {border:'solid 1px black'} }>
       <p>{player.name} - {player.character}</p>
-      <p>King: {player.is_king ? '*' : '-'} | Knight: {knightToggle}</p>
+      <p>King: {player.is_king ? '*' : '-'} | Knight: {knightToggle} | Assassinate: {assassinationToggle}</p>
       {vote}
     </div>)
   }
@@ -37,10 +50,10 @@ class Player extends Component {
 
 Player.propTypes = {
   player: PropTypes.object.isRequired,
+  viewType: PropTypes.string.isRequired,
 
-  kingView: PropTypes.bool,
   selected: PropTypes.bool,
-  onToggleKnight: PropTypes.func
+  toggle: PropTypes.func
 }
 
 export default Player;

@@ -1,5 +1,5 @@
 const AppConstants = {
-	server: 'http://localhost:3000'
+	server: 'http://avalon.williamlian.com/'
 };
 
 export default AppConstants;

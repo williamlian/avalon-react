@@ -10,7 +10,8 @@ class Game extends Component {
       isVoted: props.player.voted && !props.error,
       isVoting: props.group.status === 'voting' && !props.error,
       actionTaken: props.group.status !== 'voting' && !props.error,
-      questDone: props.player.status !== 'quest' && !props.error
+      questDone: props.player.status !== 'quest' && !props.error,
+      assassinated: props.group.status !== 'assassination' && !props.error
     };
 
     this.nominate = this.nominate.bind(this);
@@ -18,6 +19,8 @@ class Game extends Component {
     this.startVote = this.startVote.bind(this);
     this.startQuest = this.startQuest.bind(this);
     this.endTurn = this.endTurn.bind(this);
+    this.nominateAssassination = this.nominateAssassination.bind(this);
+    this.assassinate = this.assassinate.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -25,7 +28,8 @@ class Game extends Component {
       isVoted: nextProps.player.voted && !nextProps.error,
       isVoting: nextProps.group.status === 'voting' && !nextProps.error,
       actionTaken: nextProps.group.status !== 'voting' && !nextProps.error,
-      questDone: nextProps.player.status !== 'quest' && !nextProps.error
+      questDone: nextProps.player.status !== 'quest' && !nextProps.error,
+      assassinated: nextProps.group.status !== 'assassination' && !nextProps.error
     });
   }
 
@@ -58,6 +62,15 @@ class Game extends Component {
     this.props.submitQuestAction(success);
   }
 
+  nominateAssassination(target) {
+    this.props.nominateAssassinationAction(target);
+  }
+
+  assassinate() {
+    this.setState({ assassinated: true})
+    this.props.assassinateAction();
+  }
+
   render() {
     const {group, player} = this.props;
     
@@ -76,12 +89,31 @@ class Game extends Component {
       }
     } else if (group.status === 'quest') {
       groupStatus = 'Doing Quest';
+    } else if (group.status === 'assassination') {
+      groupStatus = 'Assassination';
+    } else if (group.status === 'end') {
+      groupStatus = 'Game Over';
     }
+
+    var voteStatus = '';
+    for (var i = 0; i < group.setting.max_vote; i++) {
+      voteStatus += i < group.vote_count ? '[X]' : '[ ]'
+    }
+
+    var questStatus = '';
+    group.quests.forEach(quest => {
+      questStatus += quest.result ? '[√]' : '[X]';
+    });
+    for (var j = group.quests.length; j < group.setting.knights.length; j++) {
+      questStatus += `[${group.setting.knights[j]}${group.setting.fails[j]>1?'*':''}]`;
+    }
+
 
     var actionButtons = '';
     if (group.status === 'started') {
       if (player.is_king) {
         actionButtons = <div>
+          <span>Select {group.knights_required} Knigts</span> | 
           <input type="button" value="Start Voting" onClick={this.startVote} disabled={this.props.isVoting}/>
         </div>;
       } else {
@@ -120,18 +152,36 @@ class Game extends Component {
       } else {
         actionButtons = 'Please wait for quest completing';
       }
+    } else if (group.status === 'assassination') {
+      if (player.side === 'good') {
+        actionButtons = 'Please wait for assassination';
+      } else {
+        actionButtons = <div>
+          <input type="button" value="Assassinate" onClick={this.assassinate} disabled={this.state.assassinated}/>
+        </div>;
+      }
+    } else if (group.status === 'end') {
+      actionButtons = `Game Over. Winner is ${group.winner}`;
+    }
+
+    var playerViewType = "normal";
+    if (group.status === 'started' && player.is_king) {
+      playerViewType = "king";
+    } else if (group.status === 'assassination' && player.side === 'evil') {
+      playerViewType = "assassination"
     }
 
     return (<div>
       <p>Group {group.id} | {groupStatus}</p>
+      <p>Vote {voteStatus} | Quest {questStatus}</p>
       <p>Last Quest Result: {group.quest_result.success} Success | {group.quest_result.failed} Failed</p>
       <p>{player.name} - {player.character}</p>
       <hr/>
       <PlayerList 
         players={group.players}
-        kingView={group.status === 'started' && player.is_king}
+        viewType={playerViewType}
         nominate={this.nominate}
-        isVoting={this.state.isVoting}/>
+        nominateAssassination={this.nominateAssassination}/>
       {actionButtons}
     </div>);
   }
@@ -148,7 +198,9 @@ Game.propTypes = {
   voteAction: PropTypes.func.isRequired,
   startQuestAction: PropTypes.func.isRequired,
   endTurnAction: PropTypes.func.isRequired,
-  submitQuestAction: PropTypes.func.isRequired
+  submitQuestAction: PropTypes.func.isRequired,
+  nominateAssassinationAction: PropTypes.func.isRequired,
+  assassinateAction: PropTypes.func.isRequired
 };
 
 export default Game;

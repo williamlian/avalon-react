@@ -10,6 +10,12 @@ export const receiveError = (message) => {
   };
 }
 
+export const cleanup = () => {
+  return {
+    type: 'CLEAN_UP'
+  };
+}
+
 export const createGroupSuccess = (groupJson) => {
   cookie.save('playerId', groupJson.player.id);
   return {
@@ -144,18 +150,43 @@ export const submitQuest = (success) => {
   };
 }
 
+export const nominateAssassination = (sequence) => {
+  return function (dispatch, getState) {
+    const playerId = getState().game.player.id;
+    return buildRequest('POST', '/nominate_assassination', {
+      player_id: playerId,
+      target: sequence
+    })
+    .then(response => handleResponse(response, dispatch, null));
+  };
+}
+
+export const assassinate = () => {
+  return function (dispatch, getState) {
+    const playerId = getState().game.player.id;
+    return buildRequest('POST', '/assassinate', {
+      player_id: playerId
+    })
+    .then(response => handleResponse(response, dispatch, null));
+  };
+}
+
+export const quit = () => {
+  return function (dispatch, getState) {
+    const playerId = getState().game.player.id;
+    return buildRequest('POST', '/quit', {
+      player_id: playerId
+    })
+    .then(response => handleResponse(response, dispatch, cleanup));
+  };
+}
+
 /* ---------------------------------------------------------------- */
 
 export const receivePlayerView = (gameView) => {
   return {
     type: 'RECEIVE_PLAYER_VIEW',
     game: gameView
-  };
-}
-
-export const cleanup = () => {
-  return {
-    type: 'CLEAN_UP'
   };
 }
 

@@ -29,10 +29,12 @@ class App extends Component {
         console.log(`start subsription for player ${newPlayerId}`)
         this.subscription = new window.EventSource(`${AppConstants.server}/api/subscribe/${newPlayerId}`);
         this.subscription.onmessage = (message) => {
-          if (message === 'abandon') {
+          const json = JSON.parse(message.data);
+          console.log("Receive from push", json);
+          if (json.type === 'abandon') {
             this.props.unsubscribeAction();
           } else {
-            this.props.getPlayerViewAction();
+            this.props.receivePlayerViewAction(json.data);
           }
         };
       }
@@ -41,8 +43,8 @@ class App extends Component {
 
   render() {
     var page;
-    const gameStatus = this.props.gameStatus;
-    const player = this.props.player;
+    const {gameStatus, group, player} = this.props;
+
     if (this.props.error) {
       alert(this.props.errorMessage);
     }
@@ -54,7 +56,11 @@ class App extends Component {
       } else {
         page = <WaitingContainer/>;
       }
-    } else if (gameStatus === 'started' || gameStatus === 'voting' || gameStatus === 'quest') {
+    } else if (gameStatus === 'started' || 
+               gameStatus === 'voting' || 
+               gameStatus === 'quest' ||
+               gameStatus === 'assassination' ||
+               gameStatus === 'end') {
       page = <GameConatainer/>;
     } else {
       page = <EntryContainer/>;
@@ -62,7 +68,11 @@ class App extends Component {
 
     return (
       <div>
-        <Toolbar player={player} abandonAction={this.props.abandonAction}/>
+        <Toolbar
+          player={player}
+          group={group}
+          abandonAction={this.props.abandonAction}
+          quitAction={this.props.quitAction}/>
         {page}
       </div>
     );
@@ -72,10 +82,13 @@ class App extends Component {
 App.propTypes = {
   playerId: PropTypes.string,
   gameStatus: PropTypes.string,
+  group: PropTypes.object,
   player: PropTypes.object,
 
   abandonAction: PropTypes.func,
-  unsubscribeAction: PropTypes.func
+  quitAction: PropTypes.func,
+  unsubscribeAction: PropTypes.func,
+  receivePlayerViewAction: PropTypes.func
 };
 
 export default App;

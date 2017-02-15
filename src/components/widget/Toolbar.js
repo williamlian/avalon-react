@@ -16,25 +16,35 @@ class Toolbar extends Component {
   }
   
   render() {
-    const player = this.props.player;
+    const {group, player} = this.props;
     
-    var content = '';
+    var abandonButton = '';
     if (player && player.is_admin) {
-      content = <div>
+      abandonButton = <div>
         <input type="button" value="Abandon Game" onClick={this.onAbandon}/>
       </div>;
     }
 
+    var quitButton = '';
+    if (group && (group.status === 'open' || group.status === 'end')) {
+      quitButton = <div>
+        <input type="button" value="Quit" onClick={this.props.quitAction}/>
+      </div>;
+    }
+
     return (<div style={ {border:'solid 1px black'} }>
-      {content}
+      {abandonButton}
+      {quitButton}
     </div>)
   }
 }
 
 Toolbar.propTypes = {
+  group: PropTypes.object,
   player: PropTypes.object,
 
-  abandonAction: PropTypes.func
+  abandonAction: PropTypes.func,
+  quitAction: PropTypes.func
 }
 
 export default Toolbar;

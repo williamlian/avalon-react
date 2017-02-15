@@ -36,6 +36,15 @@ const AppReducer = combineReducers({
       default:
         return '';
     }
+  },
+  updated: (state = new Date(), action) => {
+    switch (action.type) {
+      case 'RECEIVE_PLAYER_VIEW':
+      case 'ERROR':
+        return new Date();
+      default:
+        return state;
+    }
   }
 });
 
