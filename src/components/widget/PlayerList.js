@@ -24,7 +24,7 @@ class PlayerList extends Component {
           target = player.player_sequence;
         }
       });
-      if (target > 0) {
+      if (target >= 0) {
         this.setState({
           selected: {[target]: true}
         });
