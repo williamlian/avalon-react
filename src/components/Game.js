@@ -80,8 +80,8 @@ class Game extends Component {
         groupStatus = 'Voting';
       } else {
         var approve = 0;
-        Object.values(group.players).forEach(player => {
-          if (player.last_vote) {
+        Object.keys(group.players).forEach(id => {
+          if (group.players[id].last_vote) {
             approve += 1;
           }
         });
