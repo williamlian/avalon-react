@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+import '../node_modules/grommet/grommet.min.css';
 import thunkMiddleware from 'redux-thunk'
 import createLogger from 'redux-logger'
 import React from 'react';
@@ -26,6 +26,10 @@ import AppReducer from './reducers'
 import AppContainer from './containers/AppContainer';
 import './index.css';
 import { loadCookie, unsubscribe } from './actions'
+import App from 'grommet/components/App';
+import Article from 'grommet/components/Article';
+import Header from 'grommet/components/Header';
+import Title from 'grommet/components/Title';
 
 const loggerMiddleware = createLogger();
 
@@ -39,7 +43,14 @@ let store = createStore(
 
 ReactDOM.render(
   <Provider store={store}>
-    <AppContainer />
+    <App>
+      <Article>
+        <Header>
+          <Title>Sample Title</Title>
+        </Header>
+        <AppContainer />
+      </Article>
+    </App>
   </Provider>,
   document.getElementById('root')
 );
