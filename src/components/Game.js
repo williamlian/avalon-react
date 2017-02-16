@@ -160,7 +160,7 @@ class Game extends Component {
     }
 
     return (<Box flex="grow">
-      <Box flex="shrink"><Status group={group} player={player}/></Box>
+      <Box><Status group={group} player={player}/></Box>
       <Box flex="shrink">
         <Notification size="small" status="ok" message={groupStatus} pad="none"/>
       </Box>
