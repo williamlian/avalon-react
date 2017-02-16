@@ -17,7 +17,7 @@ export const cleanup = () => {
 }
 
 export const createGroupSuccess = (groupJson) => {
-  cookie.save('playerId', groupJson.player.id);
+  cookie.save('playerId', groupJson.player.id, {maxAge: 7200});
   return {
     type: 'CREATE_GROUP_SUCCESS',
     game: groupJson
@@ -34,7 +34,7 @@ export const createGroup = (groupSize) => {
 };
 
 export const joinGroupSuccess = (groupJson) => {
-  cookie.save('playerId', groupJson.player.id);
+  cookie.save('playerId', groupJson.player.id, {maxAge: 7200});
   return {
     type: 'JOIN_GROUP_SUCCESS',
     game: groupJson
