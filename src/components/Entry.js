@@ -1,5 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 
+import NumberInput from 'grommet/components/NumberInput';
+import FormField from 'grommet/components/FormField';
+import TextInput from 'grommet/components/TextInput';
+import Label from 'grommet/components/Label';
+import Button from 'grommet/components/Button';
+import Box from 'grommet/components/Box';
+
 class Entry extends Component {
 
   constructor(props) {
@@ -37,24 +44,22 @@ class Entry extends Component {
 
 	render() {
 		return (
-			<div>
-        <div>
-  				<label>Group ID: 
-  				  <input type="text" value={this.state.groupId} onChange={this.onChangeId}/>
-  				</label>
-        </div>
-        <div>
-          <label>Group Size:
-            <input type="text" value={this.state.groupSize} onChange={this.onChangeSize}/>
-          </label>
-        </div>
-        <div>
-          <input type="button" value="Create New Group" onClick={this.onCreate}/>
-        </div>
-        <div>
-          <input type="button" value="Join Group" onClick={this.onJoin}/>
-        </div>
-			</div>
+			<Box pad="large">
+			  <FormField label="Group ID">
+          <TextInput value={this.state.groupId} onChange={this.onChangeId} placeHolder="Group ID"/>
+			  </FormField>
+
+        <FormField label="Group Size">
+          <NumberInput value={this.state.groupSize} min={5} max={12} onChange={this.onChangeSize}/>
+        </FormField>
+        <Box direction="column" 
+             responsive={false}
+             pad={{vertical:"medium", between:"small"}}
+             separator="top">
+          <Button label="Create New Group" fill={true} onClick={this.onCreate}/>
+          <Button label="Join Group" fill={true} onClick={this.onJoin}/>
+        </Box>
+			</Box>
 		);
 	}
 

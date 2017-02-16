@@ -1,14 +1,23 @@
 import { combineReducers } from 'redux'
 
+const defaultState = {
+  group: {
+    setting: {}
+  },
+  player: {
+    name: 'unknown'
+  }
+}
+
 const AppReducer = combineReducers({
-	game: (state = {}, action) => {
+	game: (state = defaultState, action) => {
     switch (action.type) {
       case 'CREATE_GROUP_SUCCESS':
       case 'JOIN_GROUP_SUCCESS':
       case 'RECEIVE_PLAYER_VIEW':
         return Object.assign({}, state, action.game);
       case 'CLEAN_UP':
-        return {};
+        return defaultState;
       default:
         return state;
     }

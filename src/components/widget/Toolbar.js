@@ -1,4 +1,10 @@
 import React, { Component, PropTypes } from 'react';
+import Box from 'grommet/components/Box';
+import Header from 'grommet/components/Header';
+import Title from 'grommet/components/Title';
+import Menu from 'grommet/components/Menu';
+import Anchor from 'grommet/components/Anchor';
+import MenuIcon from 'grommet/components/icons/base/Menu';
 
 class Toolbar extends Component {
 
@@ -20,22 +26,24 @@ class Toolbar extends Component {
     
     var abandonButton = '';
     if (player && player.is_admin) {
-      abandonButton = <div>
-        <input type="button" value="Abandon Game" onClick={this.onAbandon}/>
-      </div>;
+      abandonButton = <Anchor label="Abandon" onClick={this.onAbandon}/>;
     }
 
     var quitButton = '';
     if (group && (group.status === 'open' || group.status === 'end')) {
-      quitButton = <div>
-        <input type="button" value="Quit" onClick={this.props.quitAction}/>
-      </div>;
+      quitButton = <Anchor label="Quit" onClick={this.props.quitAction}/>;
     }
 
-    return (<div style={ {border:'solid 1px black'} }>
-      {abandonButton}
-      {quitButton}
-    </div>)
+    return (<Box flex="shrink">
+      <Header separator="bottom" size="small">
+        <Title pad={{horizontal:'large'}}>Avalon</Title>
+        <Box flex={true} align="end"><Title>{group && group.id}</Title></Box>
+        <Menu icon={<MenuIcon/>} pad={{horizontal:'large'}} closeOnClick={true} dropAlign={{right:'right',top:'top'}}>
+          {abandonButton}
+          {quitButton}
+        </Menu>
+      </Header>
+    </Box>)
   }
 }
 

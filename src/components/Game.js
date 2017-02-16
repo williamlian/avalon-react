@@ -1,5 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import PlayerList from './widget/PlayerList';
+import Status from './widget/Status';
+
+import Box from 'grommet/components/Box';
+import Button from 'grommet/components/Button';
+import Label from 'grommet/components/Label';
+import Notification from 'grommet/components/Notification';
 
 class Game extends Component {
 
@@ -95,46 +101,30 @@ class Game extends Component {
       groupStatus = 'Game Over';
     }
 
-    var voteStatus = '';
-    for (var i = 0; i < group.setting.max_vote; i++) {
-      voteStatus += i < group.vote_count ? '[X]' : '[ ]'
-    }
-
-    var questStatus = '';
-    group.quests.forEach(quest => {
-      questStatus += quest.result ? '[√]' : '[X]';
-    });
-    for (var j = group.quests.length; j < group.setting.knights.length; j++) {
-      questStatus += `[${group.setting.knights[j]}${group.setting.fails[j]>1?'*':''}]`;
-    }
-
-
     var actionButtons = '';
     if (group.status === 'started') {
       if (player.is_king) {
-        actionButtons = <div>
-          <span>Select {group.knights_required} Knigts</span> | 
-          <input type="button" value="Start Voting" onClick={this.startVote} disabled={this.props.isVoting}/>
-        </div>;
+        actionButtons = [
+          <Label key="label" margin="none">Select {group.knights_required} Knigts</Label>,
+          <Button key="button" label="Start Voting" onClick={this.startVote} disabled={this.props.isVoting}/>
+        ];
       } else {
         actionButtons = 'please wait for king to nominate knights';
       }
     }
     if (group.status === 'voting') {
       if (group.last_vote_result === null) {
-        actionButtons = <div>
-          <input type="button" value="Approve" onClick={() => this.vote(true)} disabled={this.state.isVoted}/>
-          <input type="button" value="Reject" onClick={() => this.vote(false)} disabled={this.state.isVoted}/>
-        </div>;
+        actionButtons = [
+          <Button key="approve" label="Approve" onClick={this.state.isVoted ? null : () => this.vote(true)}/>,
+          <Button key="reject" label="Reject" onClick={this.state.isVoted ? null : () => this.vote(false)}/>
+        ];
       } else if (player.is_king) {
         if (group.last_vote_result) {
-          actionButtons = <div>
-            <input type="button" value="Start Quest" onClick={this.startQuest} disabled={this.state.actionTaken}/>
-          </div>;
+          actionButtons = 
+            <Button label="Start Quest" onClick={this.startQuest} disabled={this.state.actionTaken}/>;
         } else {
-          actionButtons = <div>
-            <input type="button" value="End Turn" onClick={this.endTurn} disabled={this.state.actionTaken}/>
-          </div>;
+          actionButtons =
+            <Button label="End Turn" onClick={this.endTurn} disabled={this.state.actionTaken}/>;
         }
       } else {
         if (group.last_vote_result) {
@@ -145,10 +135,10 @@ class Game extends Component {
       }
     } else if (group.status === 'quest') {
       if (player.status === 'quest') {
-        actionButtons = <div>
-          <input type="button" value="Success" onClick={() => this.quest(true)} disabled={this.state.questDone}/>
-          <input type="button" value="Fail" onClick={() => this.quest(false)} disabled={this.state.questDone || this.props.player.side === 'good'}/>
-        </div>;
+        actionButtons = [
+          <Button key="success" label="Success" onClick={this.state.questDone ? null : () => this.quest(true)}/>,
+          <Button key="fail" label="Fail" onClick={(this.state.questDone || this.props.player.side === 'good') ? null : () => this.quest(false)}/>
+        ];
       } else {
         actionButtons = 'Please wait for quest completing';
       }
@@ -156,9 +146,7 @@ class Game extends Component {
       if (player.side === 'good') {
         actionButtons = 'Please wait for assassination';
       } else {
-        actionButtons = <div>
-          <input type="button" value="Assassinate" onClick={this.assassinate} disabled={this.state.assassinated}/>
-        </div>;
+        actionButtons = <Button label="Assassinate" onClick={this.assassinate} disabled={this.state.assassinated}/>;
       }
     } else if (group.status === 'end') {
       actionButtons = `Game Over. Winner is ${group.winner}`;
@@ -171,19 +159,22 @@ class Game extends Component {
       playerViewType = "assassination"
     }
 
-    return (<div>
-      <p>Group {group.id} | {groupStatus}</p>
-      <p>Vote {voteStatus} | Quest {questStatus}</p>
-      <p>Last Quest Result: {group.quest_result.success} Success | {group.quest_result.failed} Failed</p>
-      <p>{player.name} - {player.character}</p>
-      <hr/>
-      <PlayerList 
-        players={group.players}
-        viewType={playerViewType}
-        nominate={this.nominate}
-        nominateAssassination={this.nominateAssassination}/>
-      {actionButtons}
-    </div>);
+    return (<Box flex="grow">
+      <Box flex="shrink"><Status group={group} player={player}/></Box>
+      <Box flex="shrink">
+        <Notification size="small" status="ok" message={groupStatus} pad="none"/>
+      </Box>
+      <Box flex="grow" style={{overflow:'auto', height:1}}>
+        <PlayerList 
+          players={group.players}
+          viewType={playerViewType}
+          nominate={this.nominate}
+          nominateAssassination={this.nominateAssassination}/>
+      </Box>
+      <Box direction="row" responsive={false} flex="shrink" pad="medium" justify="between" separator="top" align="center">
+        {actionButtons}
+      </Box>
+    </Box>);
   }
 
 }

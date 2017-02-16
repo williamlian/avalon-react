@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import AppConstants from '../AppConstants'
+import '../../node_modules/grommet/grommet.min.css';
 
 import EntryContainer from '../containers/EntryContainer'
 import CharacterListContainer from '../containers/CharacterListContainer'
@@ -7,6 +8,7 @@ import ReadyContainer from '../containers/ReadyContainer'
 import WaitingContainer from '../containers/WaitingContainer'
 import GameConatainer from '../containers/GameContainer'
 import Toolbar from './widget/Toolbar'
+import Box from 'grommet/components/Box';
 
 class App extends Component {
 
@@ -66,16 +68,15 @@ class App extends Component {
       page = <EntryContainer/>;
     }
 
-    return (
-      <div>
-        <Toolbar
-          player={player}
-          group={group}
-          abandonAction={this.props.abandonAction}
-          quitAction={this.props.quitAction}/>
-        {page}
-      </div>
-    );
+    return (<Box full={true}>
+      <Toolbar
+        player={player}
+        group={group}
+        abandonAction={this.props.abandonAction}
+        quitAction={this.props.quitAction}/>
+      
+      {page}
+    </Box>);
   }
 }
 

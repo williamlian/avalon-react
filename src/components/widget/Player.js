@@ -1,4 +1,13 @@
 import React, { Component, PropTypes } from 'react';
+import NameCharacter from './NameCharacter';
+import PlayerBadge from './PlayerBadge';
+
+import Card from 'grommet/components/Card';
+import Box from 'grommet/components/Box';
+import Vulnerability from 'grommet/components/icons/base/Vulnerability';
+import Like from 'grommet/components/icons/base/Like';
+import UserExpert from 'grommet/components/icons/base/UserExpert';
+import CheckBox from 'grommet/components/CheckBox';
 
 class Player extends Component {
 
@@ -9,42 +18,51 @@ class Player extends Component {
   }
 
   onToggle(event) {
-    this.props.toggle(event.target.value, event.target.checked);
+    this.props.toggle(event.target.id, event.target.checked);
   }
   
   render() {
     const player = this.props.player;
-    var knightToggle = player.is_knight ? '*' : '-';
+    var knightToggle = <UserExpert colorIndex={player.is_knight ? "grey-1" : 'light-2'}/>;
     if (this.props.viewType === 'king') {
-      knightToggle = <input 
-        type="checkbox"
-        value={this.props.player.player_sequence}
+      knightToggle = <CheckBox
         checked={this.props.selected}
+        id={player.player_sequence}
         onChange={this.onToggle}/>;
     }
 
-    var assassinationToggle = player.assassination_target ? '*' : '-';
+    var assassinationToggle = <Vulnerability colorIndex={player.assassination_target ? 'grey-1' : 'light-2'}/>;
     if (this.props.viewType === 'assassination') {
-      assassinationToggle = <input 
-        type="checkbox"
-        value={this.props.player.player_sequence}
+      assassinationToggle = <CheckBox
+        id={player.player_sequence}
         checked={this.props.selected}
         onChange={this.onToggle}/>;
     }
 
-    var vote = '';
+    var vote = <Like colorIndex="light-2"/>;
     if (player.voted) {
       if (player.last_vote === null) {
-        vote = <p>Vote: - </p>
+        vote = <Like colorIndex="unknown"/>
       } else {
-        vote = <p>Vote: {player.last_vote ? 'Approved' : 'Rejected'}</p>
+        vote = <Like colorIndex={player.last_vote ? 'ok' : 'critical'}/>
       }
     }
-    return (<div style={ {border:'solid 1px black'} }>
-      <p>{player.name} - {player.character}</p>
-      <p>King: {player.is_king ? '*' : '-'} | Knight: {knightToggle} | Assassinate: {assassinationToggle}</p>
-      {vote}
-    </div>)
+    return (<Card contentPad="medium">
+      <Box direction="row" responsive={false} pad={{horizontal:'none', vertical:'none', between:'large'}}>
+  
+        <Box alignSelf="center">
+          <PlayerBadge size="medium" player={player}/>
+        </Box>
+
+        <Box direction="column" flex={true} pad={{between:'small'}}>
+          <NameCharacter player={player} />
+
+          <Box direction="row" responsive={false} pad={{between: "small"}}>
+            {knightToggle} {vote} {assassinationToggle}
+          </Box>
+        </Box>
+      </Box>
+    </Card>)
   }
 }
 
