@@ -1,5 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 
+import Box from 'grommet/components/Box';
+import Heading from 'grommet/components/Heading';
+import TextInput from 'grommet/components/TextInput';
+import FormField from 'grommet/components/FormField';
+import Button from 'grommet/components/Button';
+
 class Ready extends Component {
 
   constructor(props) {
@@ -36,24 +42,19 @@ class Ready extends Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <p>Group ID: {this.props.groupId}</p>
-        </div>
-        <div>
-          <label>Name:
-            <input type="text" value={this.state.name} onChange={this.onNameChange}/>
-          </label>
-        </div>
-        <div>
-          <label>Photo:
-            <input type="text" value={this.state.photo} onChange={this.onPhotoChange}/>
-          </label>
-        </div>
-        <div>
-          <input type="button" value="Ready" onClick={this.onReady}/>
-        </div>
-      </div>
+      <Box pad="large">
+        <Heading tag="h3">Get Ready By Setting Your Name</Heading>
+
+        <FormField label="Name">
+          <TextInput value={this.state.name} onDOMChange={this.onNameChange} placeHolder="Your Name"/>
+        </FormField>
+
+        <FormField label="Photo">
+          <TextInput value={this.state.photo} onDOMChange={this.onPhotoChange} placeHolder="Not Yet Supported" disabled={true}/>
+        </FormField>
+
+        <Box><Button label="Ready" fill={true} onClick={this.onReady}/></Box>
+      </Box>
     );
   }
 

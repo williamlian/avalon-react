@@ -1,9 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 
+import Box from 'grommet/components/Box';
+import Heading from 'grommet/components/Heading';
+
 class Waiting extends Component {
   render() {
     const {group, player} = this.props;
-    return (<div>
+    return (<Box pad="large">
       <div>
         <p>Group ID: {group.id}</p>
       </div>
@@ -19,7 +22,7 @@ class Waiting extends Component {
       <div>
         <p>Character: {player.character}</p>
       </div>
-    </div>);
+    </Box>);
   }
 }
 

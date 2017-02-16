@@ -3,7 +3,6 @@ import React, { Component, PropTypes } from 'react';
 import Button from 'grommet/components/Button';
 import Box from 'grommet/components/Box';
 import Heading from 'grommet/components/Heading';
-import List from 'grommet/components/List';
 import CheckBox from 'grommet/components/CheckBox';
 
 class CharacterList extends Component {
@@ -66,7 +65,7 @@ class CharacterList extends Component {
           </Box>
         </Box>
         
-        <Box><Button label="submit" fill={true} onClick={this.onSubmit}/></Box>
+        <Box><Button label="Submit" fill={true} onClick={this.onSubmit}/></Box>
       </Box>
     );
   }

@@ -46,7 +46,7 @@ class Entry extends Component {
 		return (
 			<Box pad="large">
 			  <FormField label="Group ID">
-          <TextInput value={this.state.groupId} onChange={this.onChangeId} placeHolder="Group ID"/>
+          <TextInput value={this.state.groupId} onDOMChange={this.onChangeId} placeHolder="Group ID"/>
 			  </FormField>
 
         <FormField label="Group Size">
