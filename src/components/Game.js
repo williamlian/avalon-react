@@ -161,7 +161,7 @@ class Game extends Component {
 
     return (<Box flex="grow">
       <Box><Status group={group} player={player}/></Box>
-      <Box flex="shrink">
+      <Box>
         <Notification size="small" status="ok" message={groupStatus} pad="none"/>
       </Box>
       <Box flex="grow" style={{overflow:'auto', height:1}}>
@@ -171,7 +171,7 @@ class Game extends Component {
           nominate={this.nominate}
           nominateAssassination={this.nominateAssassination}/>
       </Box>
-      <Box direction="row" responsive={false} flex="shrink" pad="medium" justify="between" separator="top" align="center">
+      <Box direction="row" responsive={false} pad="medium" justify="between" separator="top" align="center">
         {actionButtons}
       </Box>
     </Box>);
