@@ -60,10 +60,12 @@ class CharacterList extends Component {
 
         <Box flex={true} 
              pad={{horizontal:"large"}}
-             style={{overflow:'auto', height:'1px'}}>
+             style={{overflow:'auto', height:'1px'}}
+             className="scroll">
           <Box pad={{between:"small", vertical:"large"}}
                direction="column"
-               responsive={false}>
+               responsive={false}
+               className="scroll">
             {characterSwitches}
           </Box>
         </Box>

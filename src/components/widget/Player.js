@@ -14,30 +14,38 @@ class Player extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      isKnight: false,
+      isTarget: false,
+    }
+
     this.onToggle = this.onToggle.bind(this);
   }
 
-  onToggle(event) {
-    this.props.toggle(event.target.id, event.target.checked);
+  componentWillReceiveProps(nextProps) {
+    const player = nextProps.player;
+    var isKnight = player.is_knight;
+    if (nextProps.viewType === 'king') {
+      isKnight = nextProps.selected;
+    }
+
+    var isTarget = player.assassination_target;
+    if (nextProps.viewType === 'assassination') {
+      isTarget = nextProps.selected;
+    }
+
+    this.setState({
+      isKnight: isKnight,
+      isTarget: isTarget
+    });
+  }
+
+  onToggle() {
+    this.props.toggle(this.props.player.player_sequence, !this.props.selected);
   }
   
   render() {
     const player = this.props.player;
-    var knightToggle = <UserExpert colorIndex={player.is_knight ? "grey-1" : 'light-2'}/>;
-    if (this.props.viewType === 'king') {
-      knightToggle = <CheckBox
-        checked={this.props.selected}
-        id={player.player_sequence}
-        onChange={this.onToggle}/>;
-    }
-
-    var assassinationToggle = <Vulnerability colorIndex={player.assassination_target ? 'grey-1' : 'light-2'}/>;
-    if (this.props.viewType === 'assassination') {
-      assassinationToggle = <CheckBox
-        id={player.player_sequence}
-        checked={this.props.selected}
-        onChange={this.onToggle}/>;
-    }
 
     var vote = <Like colorIndex="light-2"/>;
     if (player.voted) {
@@ -47,9 +55,18 @@ class Player extends Component {
         vote = <Like colorIndex={player.last_vote ? 'ok' : 'critical'}/>
       }
     }
-    return (<Card contentPad="medium">
-      <Box direction="row" responsive={false} pad={{horizontal:'none', vertical:'none', between:'large'}}>
-  
+
+    var cardColor = '';
+    if (this.state.isKnight) {
+      cardColor = '#f3fff2';
+    } else if (this.state.isTarget) {
+      cardColor = '#fff6f4';
+    }
+
+    return (<Box pad="medium" onClick={this.onToggle} 
+        style={{background: cardColor}}>
+      <Box direction="row" responsive={false} 
+        pad={{horizontal:'none', vertical:'none', between:'large'}}>
         <Box alignSelf="center">
           <PlayerBadge size="medium" player={player}/>
         </Box>
@@ -58,11 +75,13 @@ class Player extends Component {
           <NameCharacter player={player} />
 
           <Box direction="row" responsive={false} pad={{between: "small"}}>
-            {knightToggle} {vote} {assassinationToggle}
+            <UserExpert colorIndex={this.state.isKnight ? "grey-1" : 'light-2'}/>
+             {vote}
+            <Vulnerability colorIndex={this.state.isTarget ? 'grey-1' : 'light-2'}/>
           </Box>
         </Box>
       </Box>
-    </Card>)
+    </Box>);
   }
 }
 
