@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+import initReactFastclick from 'react-fastclick';
 import thunkMiddleware from 'redux-thunk'
 import createLogger from 'redux-logger'
 import React from 'react';
@@ -24,7 +25,8 @@ import { createStore, applyMiddleware } from 'redux'
 import AppReducer from './reducers'
 import AppContainer from './containers/AppContainer';
 import './index.css';
-import { loadCookie, unsubscribe } from './actions'
+import { loadCookie, unsubscribe } from './actions';
+import preventOverscroll from 'prevent-overscroll';
 
 const loggerMiddleware = createLogger();
 
@@ -36,12 +38,22 @@ let store = createStore(
   )
 );
 
+initReactFastclick();
+
+const root = document.getElementById('root');
 ReactDOM.render(
   <Provider store={store}>
     <AppContainer/>
   </Provider>,
-  document.getElementById('root')
+  root
 );
+
+var cleanup = preventOverscroll(root);
+cleanup();
+
+document.body.addEventListener('touchmove',function(e){
+     e.preventDefault();
+});
 
 store.dispatch(loadCookie());
 
