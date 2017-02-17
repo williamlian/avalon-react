@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import AppConstants from '../AppConstants'
-import '../../node_modules/grommet/grommet.min.css';
 
 import EntryContainer from '../containers/EntryContainer'
 import CharacterListContainer from '../containers/CharacterListContainer'
@@ -68,7 +67,7 @@ class App extends Component {
       page = <EntryContainer/>;
     }
 
-    return (<Box full={true}>
+    return (<Box full={true} style={{overflow:'hidden'}}>
       <Toolbar
         player={player}
         group={group}

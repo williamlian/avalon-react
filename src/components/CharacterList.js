@@ -2,8 +2,8 @@ import React, { Component, PropTypes } from 'react';
 
 import Button from 'grommet/components/Button';
 import Box from 'grommet/components/Box';
-import Heading from 'grommet/components/Heading';
 import CheckBox from 'grommet/components/CheckBox';
+import Notification from 'grommet/components/Notification';
 
 class CharacterList extends Component {
 
@@ -53,19 +53,24 @@ class CharacterList extends Component {
       );
     });
 
+    const countMessage = `Good ${setting.good} | Evil ${setting.evil}`;
     return (
-      <Box flex="grow" pad="large" direction="column" responsive={false}>
-        <Box>
-          <Heading align="center" tag="h4">Good: {setting.good} | Evil: {setting.evil}</Heading>
-        </Box>
+      <Box flex="grow" direction="column" responsive={false}>
+        <Notification size="small" status="ok" message={countMessage} pad="none"/>
 
-        <Box flex="grow" pad={{vertical:"large"}}>
-          <Box pad={{between:"small"}} direction="column" flex={true} responsive={false} style={{overflow:'auto', height:'1'}}>
+        <Box flex={true} 
+             pad={{horizontal:"large"}}
+             style={{overflow:'auto', height:'1px'}}>
+          <Box pad={{between:"small", vertical:"large"}}
+               direction="column"
+               responsive={false}>
             {characterSwitches}
           </Box>
         </Box>
         
-        <Box><Button label="Submit" fill={true} onClick={this.onSubmit}/></Box>
+        <Box pad="medium">
+          <Button label="Submit" fill={true} onClick={this.onSubmit}/>
+        </Box>
       </Box>
     );
   }

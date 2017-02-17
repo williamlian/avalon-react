@@ -8,10 +8,10 @@ class NameCharacter extends Component {
     return (
       <Box direction="row" responsive={false}>
         <Box flex={true}>
-          <Heading tag="h2" truncate={true} strong={true}>{player.name}</Heading>
+          <Heading tag="h4" strong={true}>{player.name}</Heading>
         </Box>
         <Box>
-          <Heading tag="h4" truncate={true}>{player.character_name}</Heading>
+          <Heading tag="h5" truncate={true}>{player.character_name}</Heading>
         </Box>
       </Box>
     );
