@@ -1,7 +1,6 @@
 const AppConstants = {
-	//server: 'http://avalon.williamlian.com',
+  server: 'http://avalon.williamlian.com',
   //server: 'http://192.168.0.174:3001',
-  server: 'http://localhost:3000',
   colors: {
     light: '#f5f5f5',
     critical: '#ff324d',
