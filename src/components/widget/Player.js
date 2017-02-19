@@ -58,13 +58,13 @@ class Player extends Component {
 
     var cardColor = '';
     if (this.state.isKnight) {
-      cardColor = '#f3fff2';
+      cardColor = 'knight';
     } else if (this.state.isTarget) {
-      cardColor = '#fff6f4';
+      cardColor = 'assassinated';
     }
 
-    return (<Box pad="medium" onClick={this.onToggle} 
-        style={{background: cardColor}}>
+    return (<Box pad="medium" onClick={this.onToggle} separator="bottom"
+        className={cardColor}>
       <Box direction="row" responsive={false} 
         pad={{horizontal:'none', vertical:'none', between:'large'}}>
         <Box alignSelf="center">

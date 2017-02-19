@@ -32,7 +32,9 @@ class App extends Component {
         this.subscription.onmessage = (message) => {
           const json = JSON.parse(message.data);
           console.log("Receive from push", json);
-          if (json.type === 'abandon') {
+          if (json.type === 'ping') {
+            console.log('server pinged');
+          } else if (json.type === 'abandon') {
             this.props.unsubscribeAction();
           } else {
             this.props.receivePlayerViewAction(json.data);

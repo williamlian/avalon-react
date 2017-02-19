@@ -46,8 +46,19 @@ class Status extends Component {
 
   render() {
     const player = this.props.player;
+
+    var baseColor = '';
+    if (player.is_knight) {
+      baseColor = 'knight';
+    } else if (player.assassination_target) {
+      baseColor = 'assassinated';
+    }
+
     return (
-      <Box direction="row" responsive={false} pad={{horizontal:'large', vertical:'medium', between:'large'}}>
+      <Box className={baseColor}
+           direction="row" 
+           responsive={false} 
+           pad={{horizontal:'large', vertical:'medium', between:'large'}}>
   
         <Box alignSelf="center">
           <PlayerBadge player={player} size="xlarge"/>
